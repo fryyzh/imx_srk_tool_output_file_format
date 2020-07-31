@@ -1,0 +1,45 @@
+typedef struct pkey{
+uint8_t 0x1e;
+uint16_t size_of_struct_pkey;//BIGNUM_n_len+BIGNUM_e_len+0x0c
+uint8_t 0x21;
+uint8_t 0x00;
+uint8_t 0x00;
+uint8_t 0x00;
+uint8_t 0x80; //if ca flag 0x80 else 0x00
+uint16_t size_of_BIGNUM_n;
+uint16_t size_of_BIGNUM_e;
+uint8_t BIGNUM_n[BIGNUM_n_len];
+uint8_t BIGNUM_e[BIGNUM_e_len];
+}PKEY;
+
+//if add % before certificate filenames,digest hash of public key will take place of public key in table file 
+
+typedef struct pkey_compressed{
+uint8_t 0xee;
+uint16_t size_of_struct_pkey;//sign_len+0x04
+uint8_t 0x17;//type of sign digest algorithm,sha1 0x11,sha256 0x17,sha384 0x18,sha512 0x1b,else 0x10
+uint8_t sign[sign_len]; sign of PKEY
+}PKEY_CP;
+
+
+struct table_file{
+uint8_t 0xd7;
+uint16_t size_of_struct_file;
+uint8_t 0x40
+PKEY pkey1;
+PKEY pkey2;
+PKEY pkey3;
+PKEY pkey4;
+}
+
+struct table_file_compressed{
+uint8_t 0xd7;
+uint16_t size_of_struct_file_compressed;
+uint8_t 0x40
+PKEY_CP pkey1;
+PKEY_CP pkey2;
+PKEY_CP pkey3;
+PKEY_CP pkey4;
+}
+
+fuses_file=sha256_sign(sha256_sign(PKEY pkey1)+sha256_sign(PKEY pkey2)+sha256_sign(PKEY pkey3)+sha256_sign(PKEY pkey4));
